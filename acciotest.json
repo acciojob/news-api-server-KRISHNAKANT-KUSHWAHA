@@ -1,0 +1,4 @@
+{
+    "testRepo": "news-api-server-solution",
+    "pathToFile": "cypress/integration/tests/test.spec.js"
+}
