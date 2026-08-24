@@ -29,6 +29,34 @@ app.get("/", (req, res) => {
 });
 
 // your code here!
+// Return a non-negative integer only. Any missing, fractional, negative, or
+// non-numeric query value falls back to the endpoint's documented default.
+const getPaginationValue = (value, defaultValue, minimum) => {
+  if (typeof value !== "string" || !/^\d+$/.test(value)) {
+    return defaultValue;
+  }
+
+  const parsedValue = Number(value);
+  return Number.isSafeInteger(parsedValue) && parsedValue >= minimum
+    ? parsedValue
+    : defaultValue;
+};
+
+// GET /newsFeeds?limit=10&offset=0
+// Fetch the stored documents directly so their structure is not changed.
+app.get("/newsFeeds", async (req, res, next) => {
+  const limit = getPaginationValue(req.query.limit, onePageArticleCount, 1);
+  const offset = getPaginationValue(req.query.offset, 0, 0);
+
+  try {
+    const articles = await newsArticleModel.find({}).skip(offset).limit(limit);
+    res.status(200).json(articles);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 
 // ==end==
 
